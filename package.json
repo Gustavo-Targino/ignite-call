@@ -27,7 +27,7 @@
     "phosphor-react": "^1.4.1",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
-    "react-hook-form": "^7.49.2",
+    "react-hook-form": "^7.44.0-rc.1",
     "zod": "^3.22.4"
   },
   "devDependencies": {
