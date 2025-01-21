@@ -7,11 +7,32 @@ import {
   TimePickerItem,
   TimePickerList,
 } from "./styles";
+import dayjs from "dayjs";
+import { useRouter } from "next/router";
+import { useGetUserAvailability } from "../../../../../hooks/availability/useGetUserAvailability";
 
 export function CalendarStep() {
   const [selectedDate, setSelectedDate] = useState<Date | null>(null);
 
+  const router = useRouter();
+
+  const username = String(router.query.username);
+
   const isDateSelected = !!selectedDate;
+
+  const weekDay = isDateSelected ? dayjs(selectedDate).format("dddd") : null;
+  const describedDate = isDateSelected
+    ? dayjs(selectedDate).format("DD[ de ]MMMM")
+    : null;
+
+  const selectedDateWithoutTime = isDateSelected
+    ? dayjs(selectedDate).format("YYYY-MM-DD")
+    : null;
+
+  const { data: availability } = useGetUserAvailability({
+    selectedDateWithoutTime,
+    username,
+  });
 
   return (
     <Container isTimePickerOpen={isDateSelected}>
@@ -20,21 +41,19 @@ export function CalendarStep() {
       {isDateSelected && (
         <TimePicker>
           <TimePickerHeader>
-            Terça-Feira <span>14 de Janeiro</span>
+            {weekDay} <span>{describedDate}</span>
           </TimePickerHeader>
 
           <TimePickerList>
-            <TimePickerItem> 08:00H </TimePickerItem>
-            <TimePickerItem> 09:00H </TimePickerItem>
-            <TimePickerItem> 10:00H </TimePickerItem>
-            <TimePickerItem> 11:00H </TimePickerItem>
-            <TimePickerItem> 12:00H </TimePickerItem>
-            <TimePickerItem> 13:00H </TimePickerItem>
-            <TimePickerItem> 14:00H </TimePickerItem>
-            <TimePickerItem> 15:00H </TimePickerItem>
-            <TimePickerItem> 16:00H </TimePickerItem>
-            <TimePickerItem> 17:00H </TimePickerItem>
-            <TimePickerItem> 18:00H </TimePickerItem>
+            {availability?.possibleTimes.map((hour) => {
+              return (
+                <TimePickerItem
+                  disabled={!availability.availableTimes.includes(hour)}
+                >
+                  {String(hour).padStart(2, "0")}:00h
+                </TimePickerItem>
+              );
+            })}
           </TimePickerList>
         </TimePicker>
       )}
