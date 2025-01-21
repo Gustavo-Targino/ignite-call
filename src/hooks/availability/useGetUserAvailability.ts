@@ -1,6 +1,5 @@
 import { useQuery } from "@tanstack/react-query";
 import { api } from "../../lib/axios";
-import dayjs from "dayjs";
 
 interface GetUserAvailabilityProps {
   username: string;

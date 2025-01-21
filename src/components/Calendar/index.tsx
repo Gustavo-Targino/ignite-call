@@ -10,6 +10,8 @@ import {
 import { getWeekDays } from "../../utils/get-week-days";
 import { useMemo, useState } from "react";
 import dayjs, { Dayjs } from "dayjs";
+import { useRouter } from "next/router";
+import { useGetBlockedDates } from "../../hooks/availability/useGetBlockedDates";
 
 interface CalendarWeek {
   week: number;
@@ -31,6 +33,8 @@ export function Calendar({ selecteDate, onDateSelected }: CalendarProps) {
     return dayjs().set("date", 1);
   });
 
+  const router = useRouter();
+
   function handlePreviousMonth() {
     const previousMonthDate = currentDate.subtract(1, "month");
 
@@ -48,7 +52,19 @@ export function Calendar({ selecteDate, onDateSelected }: CalendarProps) {
   const currentMonth = currentDate.format("MMMM");
   const currentYear = currentDate.format("YYYY");
 
+  const username = String(router.query.username);
+
+  const { data: blockedDates } = useGetBlockedDates({
+    year: currentDate.get("year"),
+    month: currentDate.get("month"),
+    username,
+  });
+
   const calendarWeeks = useMemo(() => {
+    if (!blockedDates) {
+      return [];
+    }
+
     const daysInMonthArray = Array.from({
       length: currentDate.daysInMonth(),
     }).map((_, i) => {
@@ -84,7 +100,9 @@ export function Calendar({ selecteDate, onDateSelected }: CalendarProps) {
       ...daysInMonthArray.map((date) => {
         return {
           date,
-          disabled: false,
+          disabled:
+            date.endOf("day").isBefore(new Date()) ||
+            blockedDates.blockedWeekDays.includes(date.get("day")),
         };
       }),
       ...nextMonthFillArray.map((date) => {
@@ -109,7 +127,7 @@ export function Calendar({ selecteDate, onDateSelected }: CalendarProps) {
     );
 
     return calendarWeeks;
-  }, [currentDate]);
+  }, [currentDate, blockedDates]);
 
   return (
     <CalendarContainer>
