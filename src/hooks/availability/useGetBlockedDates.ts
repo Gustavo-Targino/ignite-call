@@ -9,6 +9,7 @@ interface GetBlockedDatesProps {
 
 interface BlockedDatesResponse {
   blockedWeekDays: number[];
+  blockedDates: number[];
 }
 
 export function useGetBlockedDates({
@@ -24,7 +25,7 @@ export function useGetBlockedDates({
         {
           params: {
             year,
-            month,
+            month: month + 1,
           },
         }
       );
