@@ -11,7 +11,7 @@ import { getWeekDays } from "../../utils/get-week-days";
 import { useMemo, useState } from "react";
 import dayjs, { Dayjs } from "dayjs";
 import { useRouter } from "next/router";
-import { useGetBlockedDates } from "../../hooks/availability/useGetBlockedDates";
+import { useGetBlockedDates } from "../../hooks/availability/queries/useGetBlockedDates";
 
 interface CalendarWeek {
   week: number;

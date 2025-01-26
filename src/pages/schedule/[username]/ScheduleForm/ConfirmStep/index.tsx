@@ -5,6 +5,8 @@ import { z } from "zod";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import dayjs from "dayjs";
+import { useCreateSchedule } from "../../../../../hooks/availability/mutations/useCreateSchedule";
+import { useRouter } from "next/router";
 
 const confirmFormSchema = z.object({
   name: z.string().min(3, { message: "Mínimo de 3 caracteres" }),
@@ -31,8 +33,24 @@ export function ConfirmStep({
     resolver: zodResolver(confirmFormSchema),
   });
 
-  function handleConfirmScheduling(data: ConfirmFormData) {
-    console.log(data);
+  const router = useRouter();
+
+  const username = String(router.query.username);
+
+  const { mutateAsync: createSchedule } = useCreateSchedule();
+
+  async function handleConfirmScheduling(data: ConfirmFormData) {
+    const { email, name, observations } = data;
+
+    await createSchedule({
+      username,
+      name,
+      email,
+      observations,
+      date: schedulingDate,
+    });
+
+    onCancelConfirmation();
   }
 
   const describedDate = dayjs(schedulingDate).format("DD[ de ]MMMM[ de ]YYYY");

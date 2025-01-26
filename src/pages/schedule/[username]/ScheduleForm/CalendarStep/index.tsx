@@ -9,7 +9,7 @@ import {
 } from "./styles";
 import dayjs from "dayjs";
 import { useRouter } from "next/router";
-import { useGetUserAvailability } from "../../../../../hooks/availability/useGetUserAvailability";
+import { useGetUserAvailability } from "../../../../../hooks/availability/queries/useGetUserAvailability";
 
 interface CalendarStepProps {
   onSelectDateTime: (Date: Date) => void;
@@ -58,7 +58,7 @@ export function CalendarStep({ onSelectDateTime }: CalendarStepProps) {
           </TimePickerHeader>
 
           <TimePickerList>
-            {availability?.possibleTimes.map((hour) => {
+            {availability?.possibleTimes.map((hour: number) => {
               return (
                 <TimePickerItem
                   key={hour}
