@@ -11,7 +11,11 @@ import dayjs from "dayjs";
 import { useRouter } from "next/router";
 import { useGetUserAvailability } from "../../../../../hooks/availability/useGetUserAvailability";
 
-export function CalendarStep() {
+interface CalendarStepProps {
+  onSelectDateTime: (Date: Date) => void;
+}
+
+export function CalendarStep({ onSelectDateTime }: CalendarStepProps) {
   const [selectedDate, setSelectedDate] = useState<Date | null>(null);
 
   const router = useRouter();
@@ -34,6 +38,15 @@ export function CalendarStep() {
     username,
   });
 
+  function handleSelectTime(hour: number) {
+    const dateWithTime = dayjs(selectedDate)
+      .set("hour", hour)
+      .startOf("hour")
+      .toDate();
+
+    onSelectDateTime(dateWithTime);
+  }
+
   return (
     <Container isTimePickerOpen={isDateSelected}>
       <Calendar selecteDate={selectedDate} onDateSelected={setSelectedDate} />
@@ -48,6 +61,8 @@ export function CalendarStep() {
             {availability?.possibleTimes.map((hour) => {
               return (
                 <TimePickerItem
+                  key={hour}
+                  onClick={() => handleSelectTime(hour)}
                   disabled={!availability.availableTimes.includes(hour)}
                 >
                   {String(hour).padStart(2, "0")}:00h
