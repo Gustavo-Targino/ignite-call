@@ -36,6 +36,7 @@ export function CalendarStep({ onSelectDateTime }: CalendarStepProps) {
   const { data: availability } = useGetUserAvailability({
     selectedDateWithoutTime,
     username,
+    timezoneOffset: selectedDate ? selectedDate.getTimezoneOffset() : 0,
   });
 
   function handleSelectTime(hour: number) {

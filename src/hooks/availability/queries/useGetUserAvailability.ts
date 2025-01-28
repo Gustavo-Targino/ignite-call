@@ -4,6 +4,7 @@ import { api } from "../../../lib/axios";
 interface GetUserAvailabilityProps {
   username: string;
   selectedDateWithoutTime: string | null;
+  timezoneOffset: number;
 }
 
 export interface Availability {
@@ -14,6 +15,7 @@ export interface Availability {
 export function useGetUserAvailability({
   username,
   selectedDateWithoutTime,
+  timezoneOffset,
 }: GetUserAvailabilityProps) {
   const userAvailability = useQuery({
     queryKey: ["AVAILABILITY", selectedDateWithoutTime],
@@ -23,6 +25,7 @@ export function useGetUserAvailability({
         {
           params: {
             date: selectedDateWithoutTime,
+            timezoneOffset,
           },
         }
       );
